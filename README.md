@@ -8,7 +8,7 @@ The profile selects experience level, goal, and two to five kettlebell days per 
 
 ## Movement and recovery guides
 
-The Exercise Library covers all nine movements used in the plan, including their weekly variants. Workout names open the matching guide with setup cues, an easier option, a common mistake, and a link to a detailed external demonstration. Search by movement name or pattern. The yoga section includes six original, simplified pose illustrations alongside the short and long recovery flows.
+The Exercise Library covers all nine movements used in the plan, including their weekly variants. Workout names open the matching guide with setup cues, an easier option, a common mistake, and a link to a detailed external demonstration. Search by movement name or pattern. The yoga section includes six original human figure pose illustrations alongside the short and long recovery flows.
 
 ## Deployment
 
