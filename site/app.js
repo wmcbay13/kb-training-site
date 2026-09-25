@@ -1,3 +1,4 @@
+// Preserve existing browser profiles and completion history across the rename.
 const STORAGE_KEY = 'iron-and-ease-profile-v1';
 const COMPLETION_KEY = 'iron-and-ease-completed-v1';
 const MS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;

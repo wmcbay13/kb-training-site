@@ -1,6 +1,6 @@
-# Iron & Ease
+# Foundry & Flow
 
-A static kettlebell training, yoga, and everyday nutrition site for adults. Open `site/index.html` locally or serve the `site/` directory with any static server.
+Foundry & Flow is a static kettlebell training, yoga, and everyday nutrition site for adults. Open `site/index.html` locally or serve the `site/` directory with any static server. The live site is at [wmcbay13.github.io/kb-training-site](https://wmcbay13.github.io/kb-training-site/).
 
 ## How the plan works
 
