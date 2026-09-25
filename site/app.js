@@ -1,6 +1,7 @@
 // Preserve existing browser profiles and completion history across the rename.
 const STORAGE_KEY = 'iron-and-ease-profile-v1';
 const COMPLETION_KEY = 'iron-and-ease-completed-v1';
+const SETS_KEY = 'foundry-and-flow-sets-v1';
 const MS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
 const GOAL_LABELS = { strength: 'Build strength', fitness: 'General fitness', mobility: 'Move with ease' };
 const EXPERIENCE_LABELS = { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced' };
@@ -54,6 +55,8 @@ function readJson(key) { try { return JSON.parse(localStorage.getItem(key)); } c
 let profile = normalizeProfile(readJson(STORAGE_KEY));
 let completed = readJson(COMPLETION_KEY);
 if (!completed || typeof completed !== 'object' || Array.isArray(completed)) completed = {};
+let checkedSets = readJson(SETS_KEY);
+if (!checkedSets || typeof checkedSets !== 'object' || Array.isArray(checkedSets)) checkedSets = {};
 const currentWeek = () => Math.max(1, Math.floor((utcDate(localDateString()).getTime() - utcDate(profile.startDate).getTime()) / MS_PER_WEEK) + 1);
 let shownWeek = currentWeek();
 let selectedSession = 0;
@@ -64,9 +67,9 @@ function prescription(move, week) {
   const sets = Math.max(2, Math.min(4, levelSets + (week % 4 === 3 ? 1 : 0) - (recoveryWeek ? 1 : 0)));
   const base = { strength: 6, fitness: 9, mobility: 7 }[profile.goal];
   const reps = recoveryWeek ? Math.max(4, base - 2) : base + (week % 4 === 2 ? 1 : 0);
-  if (move.kind === 'time') return `${sets} × ${recoveryWeek ? 20 : profile.goal === 'mobility' ? 25 : 35} sec / side`;
-  if (move.kind === 'sides') return `${sets} × ${move === EXERCISES.halo ? (recoveryWeek ? 4 : 5) : reps} / side`;
-  return `${sets} × ${reps}`;
+  if (move.kind === 'time') return { sets, dose: `${sets} × ${recoveryWeek ? 20 : profile.goal === 'mobility' ? 25 : 35} sec / side` };
+  if (move.kind === 'sides') return { sets, dose: `${sets} × ${move === EXERCISES.halo ? (recoveryWeek ? 4 : 5) : reps} / side` };
+  return { sets, dose: `${sets} × ${reps}` };
 }
 
 function movement(id, week, index, sessionIndex) {
@@ -85,15 +88,70 @@ function movement(id, week, index, sessionIndex) {
     if (id === 'press') name = 'Half-kneeling press';
   }
   if (profile.experience === 'advanced' && id === 'deadlift' && week > 2 && week % 3 === 0) name = 'Single-leg kettlebell deadlift';
-  return { name, dose: prescription(exercise, week) };
+  return { id, name, ...prescription(exercise, week) };
 }
 
 function completedKey(week, index) { return `${profile.startDate}:${week}:${index}`; }
+function setKey(week, session, move, set) { return `${completedKey(week, session)}:${move}:${set}`; }
 function makeElement(tag, className, textContent) {
   const element = document.createElement(tag);
   if (className) element.className = className;
   if (textContent !== undefined) element.textContent = textContent;
   return element;
+}
+
+let selectedLibraryMove = 'halo';
+function openExercise(id) {
+  selectedLibraryMove = id;
+  document.getElementById('exerciseSearch').value = '';
+  renderExerciseLibrary();
+  document.getElementById('library').scrollIntoView({ behavior: 'smooth' });
+}
+
+function renderExerciseLibrary() {
+  const query = document.getElementById('exerciseSearch').value.trim().toLowerCase();
+  const cards = document.getElementById('libraryCards');
+  const detail = document.getElementById('libraryDetail');
+  const matches = Object.entries(EXERCISE_GUIDE).filter(([, guide]) =>
+    `${guide.title} ${guide.pattern} ${guide.variants}`.toLowerCase().includes(query));
+  cards.replaceChildren();
+  if (!matches.length) {
+    cards.append(makeElement('p', 'library-empty', 'No movements found. Try a name like squat or a pattern like hinge.'));
+    detail.replaceChildren(makeElement('p', 'library-empty', 'Choose a movement to see its setup and cues.'));
+    return;
+  }
+  if (!matches.some(([id]) => id === selectedLibraryMove)) selectedLibraryMove = matches[0][0];
+  matches.forEach(([id, guide]) => {
+    const button = makeElement('button', `library-card${id === selectedLibraryMove ? ' active' : ''}`);
+    button.type = 'button';
+    button.setAttribute('aria-pressed', String(id === selectedLibraryMove));
+    button.append(makeElement('span', 'library-card-mark', guide.mark));
+    const copy = makeElement('span');
+    copy.append(makeElement('strong', '', guide.title), makeElement('small', '', guide.pattern));
+    button.append(copy, makeElement('span', 'library-card-arrow', '↗'));
+    button.addEventListener('click', () => { selectedLibraryMove = id; renderExerciseLibrary(); });
+    cards.append(button);
+  });
+  const guide = EXERCISE_GUIDE[selectedLibraryMove];
+  detail.replaceChildren();
+  detail.append(makeElement('p', 'library-detail-kicker', `${guide.mark} / ${guide.pattern.toUpperCase()}`), makeElement('h3', '', guide.title));
+  const setup = makeElement('div', 'library-detail-block');
+  setup.append(makeElement('h4', '', 'SET UP'), makeElement('p', '', guide.setup));
+  const cues = makeElement('div', 'library-detail-block');
+  cues.append(makeElement('h4', '', 'AS YOU MOVE'));
+  const cueList = makeElement('ul');
+  guide.cues.forEach(cue => cueList.append(makeElement('li', '', cue)));
+  cues.append(cueList);
+  const easier = makeElement('div', 'library-detail-block');
+  easier.append(makeElement('h4', '', 'MAKE IT EASIER'), makeElement('p', '', guide.easier));
+  const avoid = makeElement('div', 'library-detail-block');
+  avoid.append(makeElement('h4', '', 'WATCH FOR'), makeElement('p', '', guide.avoid));
+  const variants = makeElement('p', 'library-variants', `IN YOUR PLAN  /  ${guide.variants}`);
+  const source = makeElement('a', 'library-source', 'See a detailed guide ↗');
+  source.href = guide.guide;
+  source.target = '_blank';
+  source.rel = 'noopener noreferrer';
+  detail.append(setup, cues, easier, avoid, variants, source);
 }
 
 function renderSessions() {
@@ -121,13 +179,44 @@ function renderDetail() {
   top.append(makeElement('span', '', `SESSION ${String(selectedSession + 1).padStart(2, '0')} / ${String(profile.days).padStart(2, '0')}`), makeElement('span', '', '25–35 MIN'));
   detail.append(top, makeElement('h3', '', session.name), makeElement('p', 'detail-description', `${session.focus}. Begin with 4 minutes of easy mobility; finish with a gentle cooldown. Rest ${profile.goal === 'strength' ? '75–90' : '45–60'} seconds between sets.`));
   const list = makeElement('ul', 'exercise-list');
+  const setStatus = makeElement('p', 'set-status');
+  let totalSets = 0;
+  let doneSets = 0;
+  function updateSetStatus() { setStatus.textContent = `${doneSets} of ${totalSets} sets checked`; }
   session.moves.forEach((id, index) => {
     const item = makeElement('li');
     const move = movement(id, shownWeek, index, selectedSession);
-    item.append(makeElement('span', '', move.name), makeElement('span', '', move.dose));
+    const heading = makeElement('div', 'exercise-heading');
+    const link = makeElement('button', 'exercise-guide-link', move.name);
+    link.type = 'button';
+    link.setAttribute('aria-label', `Read guide for ${move.name}`);
+    link.addEventListener('click', () => openExercise(id));
+    heading.append(link, makeElement('span', 'exercise-dose', move.dose));
+    const checklist = makeElement('div', 'set-checklist');
+    checklist.setAttribute('aria-label', `${move.name} sets`);
+    for (let set = 1; set <= move.sets; set++) {
+      const key = setKey(shownWeek, selectedSession, index, set);
+      const label = makeElement('label', 'set-check');
+      const input = makeElement('input');
+      input.type = 'checkbox';
+      input.checked = Boolean(checkedSets[key]);
+      if (input.checked) doneSets++;
+      input.setAttribute('aria-label', `${move.name}, set ${set}`);
+      input.addEventListener('change', () => {
+        if (input.checked) { checkedSets[key] = true; doneSets++; }
+        else { delete checkedSets[key]; doneSets--; }
+        try { localStorage.setItem(SETS_KEY, JSON.stringify(checkedSets)); } catch { /* Keep state for this visit. */ }
+        updateSetStatus();
+      });
+      label.append(input, makeElement('span', '', `Set ${set}`));
+      checklist.append(label);
+      totalSets++;
+    }
+    item.append(heading, checklist);
     list.append(item);
   });
-  detail.append(list);
+  updateSetStatus();
+  detail.append(list, setStatus);
   const note = shownWeek % 4 === 0 ? 'Recovery week: use a comfortable effort and focus on smooth movement.' : profile.experience === 'beginner' ? 'Choose a manageable bell. Learn the hinge before progressing to swings.' : 'Choose a bell that lets you finish every rep with control.';
   detail.append(makeElement('p', 'detail-note', note));
   const button = makeElement('button', 'complete-button', completed[completedKey(shownWeek, selectedSession)] ? '✓ Session complete · undo' : 'Mark session complete');
@@ -261,6 +350,7 @@ function initializeProfileForm() {
 
 document.getElementById('prevWeek').addEventListener('click', () => { if (shownWeek > 1) { shownWeek--; selectedSession = 0; renderPlan(); } });
 document.getElementById('nextWeek').addEventListener('click', () => { shownWeek++; selectedSession = 0; renderPlan(); });
+document.getElementById('exerciseSearch').addEventListener('input', renderExerciseLibrary);
 document.querySelectorAll('.flow-toggle').forEach(button => button.addEventListener('click', () => {
   const list = document.getElementById(button.getAttribute('aria-controls'));
   const expanded = button.getAttribute('aria-expanded') === 'true';
@@ -270,4 +360,5 @@ document.querySelectorAll('.flow-toggle').forEach(button => button.addEventListe
 }));
 document.getElementById('year').textContent = String(new Date().getFullYear());
 initializeProfileForm();
+renderExerciseLibrary();
 renderPlan();
