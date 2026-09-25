@@ -10,6 +10,10 @@ The profile selects experience level, goal, and two to five kettlebell days per 
 
 The Exercise Library covers all nine movements used in the plan, including their weekly variants. Workout names open the matching guide with setup cues, an easier option, a common mistake, and a link to a detailed external demonstration. Search by movement name or pattern. The yoga section includes six original human figure pose illustrations alongside the short and long recovery flows.
 
+## Everyday food ideas
+
+The nutrition section builds on the four everyday tips with flexible examples for breakfast, lunch, and dinner, plus snack and drink ideas. These are food combinations and prep cues rather than prescribed portions or a fixed menu. Sources include USDA MyPlate and CDC guidance on beverages.
+
 ## Deployment
 
 The GitHub Actions workflow in `.github/workflows/pages.yml` publishes `site/` to GitHub Pages after every push to `main`, including pull request merges. In repository Settings → Pages, select **GitHub Actions** as the build and deployment source.
@@ -19,5 +23,7 @@ The GitHub Actions workflow in `.github/workflows/pages.yml` publishes `site/` t
 - [ACE Fitness kettlebell introduction](https://www.acefitness.org/resources/pros/expert-articles/5269/how-to-get-started-with-kettlebells/)
 - [WHO physical activity guidance](https://www.who.int/publications/i/item/9789240014886)
 - [USDA MyPlate](https://www.myplate.gov/)
+- [USDA MyPlate healthy snacking](https://www.myplate.gov/sites/default/files/2024-06/TipSheet-12-Healthy-Snacking-With-MyPlate.pdf)
+- [CDC water and healthier drinks](https://www.cdc.gov/healthy-weight-growth/water-healthy-drinks/index.html)
 - [ACE Fitness two-handed kettlebell swing](https://www.acefitness.org/continuing-education/certified/january-2025/8788/the-ace-do-it-better-series-the-two-handed-kettlebell-swing/)
 - [Yoga Journal pose library](https://www.yogajournal.com/poses/)
