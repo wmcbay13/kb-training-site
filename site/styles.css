@@ -87,3 +87,33 @@
 .exercise-list li .set-check input:checked+span{color:#26372c}
 
 .yoga-illustration img{display:block;width:min(100%,290px);height:166px;object-fit:cover;object-position:center;border:1px solid rgba(58,79,62,.18)}
+
+/* Everyday meal ideas */
+.nutrition{row-gap:58px}
+.nutrition-examples{grid-column:1/-1;border-top:1px solid #657366;padding-top:34px}
+.nutrition-examples-heading{display:flex;align-items:end;justify-content:space-between;gap:30px;margin-bottom:26px}
+.nutrition-examples-heading h3{font-size:clamp(30px,3.6vw,48px);letter-spacing:-.06em;margin:10px 0 0}
+.nutrition-examples-heading h3 i{color:#cb8b6c;font-weight:400}
+.nutrition-examples-heading>p{max-width:320px;color:#bdc8ba;font-size:12px;line-height:1.7;margin:0}
+.meal-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.meal-card{min-height:248px;display:flex;flex-direction:column;padding:23px 24px 20px;border:1px solid #718074;background:#2c4135}
+.meal-label{color:#e0a183;font-size:10px;font-weight:700;letter-spacing:.18em}
+.meal-card h4{font:700 24px Georgia,serif;letter-spacing:-.04em;margin:22px 0 10px}
+.meal-card>p{color:#d0d8cb;font-size:12px;line-height:1.7;margin:0 0 20px}
+.meal-extra{display:flex;align-items:baseline;gap:12px;border-top:1px solid #667669;padding-top:13px;margin-top:auto;font-size:10px;line-height:1.5}
+.meal-extra strong{flex:none;color:#e0a183;font-size:9px;letter-spacing:.13em}
+.meal-extra span{color:#c2cebd}
+.small-bites-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:13px}
+.small-bites{padding:23px 24px 20px;border:1px solid #718074;background:#263a30}
+.small-bites-heading{display:flex;align-items:center;gap:14px;padding-bottom:14px;border-bottom:1px solid #667669}
+.small-bites-heading>span{color:#dc9c7a;font-size:23px;line-height:1}
+.small-bites h4{font:700 21px Georgia,serif;letter-spacing:-.04em;margin:0}
+.small-bites ul{list-style:none;padding:0;margin:4px 0 0}
+.small-bites li{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid #526456;font-size:11px;line-height:1.5}
+.small-bites li:last-child{border-bottom:0;padding-bottom:0}
+.small-bites li strong{font-weight:700;min-width:42%}
+.small-bites li span{color:#bdc8ba;text-align:right}
+.nutrition-examples .source-note{margin:19px 0 0}
+@media(max-width:950px){.meal-cards{grid-template-columns:1fr 1fr}.meal-card:last-child{grid-column:1/-1;min-height:0}.small-bites li{display:block}.small-bites li span{display:block;text-align:left;margin-top:4px}}
+@media(max-width:700px){.nutrition{row-gap:45px}.nutrition-examples-heading{display:block}.nutrition-examples-heading>p{margin-top:12px}.meal-cards,.small-bites-grid{grid-template-columns:1fr}.meal-card,.meal-card:last-child{grid-column:auto;min-height:0}.meal-card h4{margin-top:18px}.small-bites li{display:flex}.small-bites li span{text-align:right;margin:0}}
+@media(max-width:410px){.small-bites li{display:block}.small-bites li span{text-align:left;margin-top:4px}}
