@@ -135,9 +135,27 @@ function renderDetail() {
     const key = completedKey(shownWeek, selectedSession);
     if (completed[key]) delete completed[key]; else completed[key] = true;
     try { localStorage.setItem(COMPLETION_KEY, JSON.stringify(completed)); } catch { /* Session still updates when storage is unavailable. */ }
-    renderSessions(); renderDetail();
+    renderSessions(); renderDetail(); renderWeekVisuals();
   });
   detail.append(button);
+}
+
+function renderWeekVisuals() {
+  const slots = { 2: [0, 3], 3: [0, 2, 4], 4: [0, 1, 3, 5], 5: [0, 1, 2, 4, 5] }[profile.days];
+  const rhythm = document.getElementById('rhythmDays');
+  rhythm.replaceChildren();
+  for (let day = 0; day < 7; day++) {
+    const training = slots.includes(day);
+    const item = makeElement('div', `rhythm-day${training ? ' train' : ''}`);
+    item.setAttribute('aria-label', `Day ${day + 1}: ${training ? 'kettlebell training' : 'yoga or rest'}`);
+    item.append(makeElement('span', 'day-dot', String(day + 1)), makeElement('small', '', training ? 'Train' : 'Recover'));
+    rhythm.append(item);
+  }
+  const done = Array.from({ length: profile.days }, (_, index) => Boolean(completed[completedKey(shownWeek, index)])).filter(Boolean).length;
+  document.getElementById('progressText').textContent = `${done} / ${profile.days}`;
+  const bars = document.getElementById('progressBars');
+  bars.replaceChildren();
+  for (let index = 0; index < profile.days; index++) bars.append(makeElement('span', completed[completedKey(shownWeek, index)] ? 'is-complete' : ''));
 }
 
 function renderPlan() {
@@ -148,36 +166,61 @@ function renderPlan() {
   document.getElementById('weekDates').textContent = `${dateLabel(weekStart)} – ${dateLabel(weekEnd)}`;
   document.getElementById('prevWeek').disabled = shownWeek <= 1;
   document.getElementById('planSummary').textContent = `${profile.days} days / week · ${EXPERIENCE_LABELS[profile.experience]} · ${GOAL_LABELS[profile.goal]}`;
-  renderSessions(); renderDetail();
+  renderSessions(); renderDetail(); renderWeekVisuals();
 }
 
 function writeMeasurements() {
   const units = document.getElementById('units').value;
-  document.getElementById('imperialFields').hidden = units !== 'imperial';
-  document.getElementById('metricFields').hidden = units !== 'metric';
-  if (profile.heightCm !== null) {
-    document.getElementById('centimeters').value = Number(profile.heightCm.toFixed(1));
-    const totalInches = Math.round(profile.heightCm / 2.54);
-    document.getElementById('feet').value = Math.floor(totalInches / 12);
-    document.getElementById('inches').value = totalInches % 12;
+  const height = document.getElementById('height');
+  const weight = document.getElementById('weight');
+  height.placeholder = units === 'imperial' ? `5'8"` : '173 cm';
+  weight.placeholder = units === 'imperial' ? '175 lb' : '80 kg';
+  document.getElementById('heightHint').textContent = units === 'imperial' ? `e.g. 5'8" or 68 in` : 'e.g. 173 cm or 1.73 m';
+  document.getElementById('weightHint').textContent = units === 'imperial' ? 'e.g. 175 lb' : 'e.g. 80 kg';
+  if (profile.heightCm === null) height.value = '';
+  else if (units === 'metric') height.value = `${Number(profile.heightCm.toFixed(1))} cm`;
+  else {
+    const totalInches = Math.round(profile.heightCm / 2.54 * 10) / 10;
+    const feet = Math.floor(totalInches / 12);
+    height.value = `${feet}'${Number((totalInches - feet * 12).toFixed(1))}"`;
   }
-  if (profile.weightKg !== null) {
-    document.getElementById('kilograms').value = Number(profile.weightKg.toFixed(1));
-    document.getElementById('pounds').value = Number((profile.weightKg * 2.20462262).toFixed(1));
-  }
+  weight.value = profile.weightKg === null ? '' : units === 'metric' ? `${Number(profile.weightKg.toFixed(1))} kg` : `${Number((profile.weightKg * 2.20462262).toFixed(1))} lb`;
 }
 
-function measurementFromForm() {
-  const units = document.getElementById('units').value;
-  if (units === 'metric') {
-    const cm = document.getElementById('centimeters').value;
-    const kg = document.getElementById('kilograms').value;
-    return { heightCm: cm === '' ? null : Number(cm), weightKg: kg === '' ? null : Number(kg) };
-  }
-  const feet = document.getElementById('feet').value;
-  const inches = document.getElementById('inches').value;
-  const pounds = document.getElementById('pounds').value;
-  return { heightCm: feet === '' && inches === '' ? null : ((Number(feet || 0) * 12) + Number(inches || 0)) * 2.54, weightKg: pounds === '' ? null : Number(pounds) / 2.20462262 };
+function parseHeight(raw, units) {
+  const text = raw.trim().toLowerCase();
+  if (!text) return { value: null };
+  let cm;
+  let match;
+  if ((match = text.match(/^(\d+(?:\.\d+)?)\s*(?:ft|feet|foot|')\s*(?:(\d+(?:\.\d+)?)\s*(?:in|inches?|\")?)?$/))) {
+    const feet = Number(match[1]);
+    const inches = Number(match[2] || 0);
+    if (inches >= 12 || (match[2] && !Number.isInteger(feet))) return { error: `Use a height such as 5'8" or 68 in.` };
+    cm = (feet * 12 + inches) * 2.54;
+  } else if ((match = text.match(/^(\d+(?:\.\d+)?)\s*(?:cm|centimeters?)$/))) cm = Number(match[1]);
+  else if ((match = text.match(/^(\d+(?:\.\d+)?)\s*(?:m|meters?)$/))) cm = Number(match[1]) * 100;
+  else if ((match = text.match(/^(\d+(?:\.\d+)?)\s*(?:in|inches?|\")$/))) cm = Number(match[1]) * 2.54;
+  else if ((match = text.match(/^(\d+(?:\.\d+)?)$/))) cm = Number(match[1]) * (units === 'imperial' ? 2.54 : 1);
+  else return { error: `Use a height such as 5'8" or 173 cm.` };
+  return validNumber(cm, 90, 250) ? { value: cm } : { error: 'Height must be between 90 and 250 cm (about 3–8 ft).' };
+}
+
+function parseWeight(raw, units) {
+  const text = raw.trim().toLowerCase();
+  if (!text) return { value: null };
+  const match = text.match(/^(\d+(?:\.\d+)?)\s*(lb|lbs|pounds?|kg|kgs|kilograms?)?$/);
+  if (!match) return { error: 'Use a weight such as 175 lb or 80 kg.' };
+  const unit = match[2] || (units === 'imperial' ? 'lb' : 'kg');
+  const kg = Number(match[1]) / (/^(?:lb|lbs|pound)/.test(unit) ? 2.20462262 : 1);
+  return validNumber(kg, 25, 450) ? { value: kg } : { error: 'Weight must be between 25 and 450 kg (about 55–990 lb).' };
+}
+
+function measurementFromForm(units = document.getElementById('units').value) {
+  const height = parseHeight(document.getElementById('height').value, units);
+  if (height.error) return { error: height.error };
+  const weight = parseWeight(document.getElementById('weight').value, units);
+  if (weight.error) return { error: weight.error };
+  return { heightCm: height.value, weightKg: weight.value };
 }
 
 function initializeProfileForm() {
@@ -188,18 +231,24 @@ function initializeProfileForm() {
   writeMeasurements();
   document.getElementById('units').addEventListener('change', () => {
     const previousUnits = profile.units;
+    const nextUnits = document.getElementById('units').value;
     document.getElementById('units').value = previousUnits;
     const values = measurementFromForm();
+    if (values.error) {
+      document.getElementById('formMessage').textContent = values.error;
+      return;
+    }
     profile = { ...profile, ...values };
-    document.getElementById('units').value = previousUnits === 'metric' ? 'imperial' : 'metric';
-    profile.units = document.getElementById('units').value;
+    document.getElementById('units').value = nextUnits;
+    profile.units = nextUnits;
+    document.getElementById('formMessage').textContent = '';
     writeMeasurements();
   });
   document.getElementById('profileForm').addEventListener('submit', event => {
     event.preventDefault();
     const values = measurementFromForm();
-    if ((values.heightCm !== null && !validNumber(values.heightCm, 90, 250)) || (values.weightKg !== null && !validNumber(values.weightKg, 25, 450))) {
-      document.getElementById('formMessage').textContent = 'Please check your height and weight entries.';
+    if (values.error) {
+      document.getElementById('formMessage').textContent = values.error;
       return;
     }
     profile = normalizeProfile({ ...profile, ...values, experience: document.getElementById('experience').value, goal: document.getElementById('goal').value, days: Number(document.getElementById('days').value), units: document.getElementById('units').value });

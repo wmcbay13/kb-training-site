@@ -4,7 +4,7 @@ A static kettlebell training, yoga, and everyday nutrition site for adults. Open
 
 ## How the plan works
 
-The profile selects experience level, goal, and two to five kettlebell days per week. The site stores that profile and session completion in browser `localStorage`. Height and weight are optional reference fields; they do not determine exercise loads or calorie targets. Each seven-day week is anchored to the date the profile was first saved. Exercise alternatives and bounded set or rep changes provide weekly variety, with every fourth week using easier volume.
+The profile selects experience level, goal, and two to five kettlebell days per week. The site stores that profile and session completion in browser `localStorage`. Height and weight are optional reference fields that accept typed units such as `5'8"`, `173 cm`, `175 lb`, or `80 kg`; they do not determine exercise loads or calorie targets. Each seven-day week is anchored to the date the profile was first saved. Exercise alternatives and bounded set or rep changes provide weekly variety, with every fourth week using easier volume. A weekly rhythm diagram and completion bars show the plan at a glance.
 
 ## Deployment
 
