@@ -7,6 +7,7 @@
     <meta name="description" content="Foundry &amp; Flow: thoughtful kettlebell training, yoga, and everyday nutrition for strength that lasts." />
     <title>Foundry &amp; Flow — Kettlebell Training Club</title>
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <script src="./theme.js"></script>
     <link rel="stylesheet" href="./styles.css" />
     <script src="./exercise-library.js" defer></script>
     <script src="./app.js" defer></script>
@@ -16,13 +17,16 @@
     <div class="site-shell">
       <header class="site-header">
         <a class="brand" href="#top" aria-label="Foundry and Flow, back to top">
-          <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M16 19v-6a8 8 0 0 1 16 0v6" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M9 24c0-5 4-9 9-9h12c5 0 9 4 9 9v5c0 9-6 15-15 15S9 38 9 29v-5Z" fill="currentColor"/><path d="M18 26h12" stroke="#eee8dc" stroke-width="2" opacity=".5"/></svg>
+          <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M16 19v-6a8 8 0 0 1 16 0v6" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M9 24c0-5 4-9 9-9h12c5 0 9 4 9 9v5c0 9-6 15-15 15S9 38 9 29v-5Z" fill="currentColor"/><path d="M18 26h12" stroke="var(--paper)" stroke-width="2" opacity=".5"/></svg>
           <span>FOUNDRY <em>&amp;</em> FLOW<small>TRAINING CLUB</small></span>
         </a>
         <nav class="desktop-nav" aria-label="Main navigation">
           <a href="#program">Exercise</a><a href="#yoga">Yoga</a><a href="#nutrition">Eat well</a>
         </nav>
-        <a class="header-cta" href="#profile">Set up your plan <span aria-hidden="true">↗</span></a>
+        <div class="header-actions">
+          <button class="theme-toggle" id="themeToggle" type="button" aria-label="Dark mode" aria-pressed="false"><span aria-hidden="true">☾</span><span class="theme-toggle-label">Dark mode</span></button>
+          <a class="header-cta" href="#profile">Set up your plan <span aria-hidden="true">↗</span></a>
+        </div>
       </header>
 
       <main id="main">
