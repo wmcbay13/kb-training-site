@@ -117,3 +117,44 @@
 @media(max-width:950px){.meal-cards{grid-template-columns:1fr 1fr}.meal-card:last-child{grid-column:1/-1;min-height:0}.small-bites li{display:block}.small-bites li span{display:block;text-align:left;margin-top:4px}}
 @media(max-width:700px){.nutrition{row-gap:45px}.nutrition-examples-heading{display:block}.nutrition-examples-heading>p{margin-top:12px}.meal-cards,.small-bites-grid{grid-template-columns:1fr}.meal-card,.meal-card:last-child{grid-column:auto;min-height:0}.meal-card h4{margin-top:18px}.small-bites li{display:flex}.small-bites li span{text-align:right;margin:0}}
 @media(max-width:410px){.small-bites li{display:block}.small-bites li span{text-align:left;margin-top:4px}}
+
+/* Theme control and dark palette */
+:root{color-scheme:light}
+.header-actions{display:flex;align-items:center;gap:22px}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:44px;min-height:44px;padding:8px 12px;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:11px;font-weight:700;white-space:nowrap}
+.theme-toggle>span:first-child{font-size:22px;line-height:1}
+.theme-toggle:hover{background:var(--paper-dark)}
+.theme-toggle[aria-pressed=true]{border-color:var(--rust)}
+:root[data-theme=dark]{color-scheme:dark;--paper:#18221d;--paper-dark:#26342c;--ink:#ede7da;--deep:#111c17;--rust:#df9b7c;--rust-dark:#e7ad91;--olive:#a4b49a;--line:#46564a;--muted:#b6c1b0;--white:#f1eadc}
+[data-theme=dark] .hero-intro{color:#c7d0bf}
+[data-theme=dark] .program,[data-theme=dark] .site-footer{background:#1e2c24}
+[data-theme=dark] .library{background:#152019}
+[data-theme=dark] .session-card,[data-theme=dark] .library-card{background:#233228;border-color:var(--line)}
+[data-theme=dark] .session-card:hover,[data-theme=dark] .session-card.active,[data-theme=dark] .library-card:hover,[data-theme=dark] .library-card.active{background:#304234;border-color:#9baa91}
+[data-theme=dark] .rhythm-visual,[data-theme=dark] .progress-visual{background:#26362b;border-color:var(--line)}
+[data-theme=dark] .rhythm-day .day-dot{border-color:#72816b}
+[data-theme=dark] .rhythm-day.train .day-dot{background:#aec09f;border-color:#aec09f;color:#17221b}
+[data-theme=dark] .progress-bars span{background:#354738;border-color:#72816b}
+[data-theme=dark] .progress-bars span.is-complete{background:var(--olive)}
+[data-theme=dark] .library-detail{background:#293b2e;border-color:#55664e}
+[data-theme=dark] .library-detail-block,[data-theme=dark] .library-variants{border-color:#63725b}
+[data-theme=dark] .library-detail-block p,[data-theme=dark] .library-detail-block ul{color:#d0d9c7}
+[data-theme=dark] .yoga-short,[data-theme=dark] .pose-card:nth-child(2n){background:#293b2e}
+[data-theme=dark] .yoga-long,[data-theme=dark] .pose-card{background:#34382c}
+[data-theme=dark] .pose-card{border-color:#53604e}
+[data-theme=dark] .yoga-card p,[data-theme=dark] .pose-card p{color:#c7d0bf}
+[data-theme=dark] .flow-list,[data-theme=dark] .pose-drawing{border-color:#63725b}
+[data-theme=dark] .profile-form{background:#25352a;border-color:var(--line);box-shadow:9px 9px 0 #101a15}
+[data-theme=dark] .profile-form select,[data-theme=dark] .profile-form input,[data-theme=dark] .library-search input{background:#142019;border-color:#63725b;color:var(--ink)}
+[data-theme=dark] input::placeholder{color:#a9b69f;opacity:1}
+[data-theme=dark] .button-dark{background:#b4c3a7;color:#142019}
+[data-theme=dark] .button-dark:hover{background:#c7d4bd}
+[data-theme=dark] .button-rust,[data-theme=dark] .quote-band{background:#754331;color:var(--white)}
+[data-theme=dark] .button-rust:hover{background:#88513c}
+[data-theme=dark] .week-controls button:hover{background:#aec09f;color:#142019}
+[data-theme=dark] .hero-poster,[data-theme=dark] .pose-drawing img,[data-theme=dark] .yoga-illustration img{filter:brightness(.78)}
+@media(max-width:1100px){.header-actions{gap:14px}.theme-toggle-label{display:none}.theme-toggle{padding:8px 10px}}
+@media(max-width:700px){.site-header{gap:12px}.header-actions{gap:12px}}
+@media(max-width:410px){.site-header{gap:10px}.header-cta{display:none}.brand{font-size:18px;gap:8px}.brand-mark{width:26px;height:30px}}
+[data-theme=dark] .skip-link{background:var(--deep);color:var(--white)}
+@media(max-width:850px){.desktop-nav{display:none}}

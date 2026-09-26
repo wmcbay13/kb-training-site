@@ -14,6 +14,10 @@ The Exercise Library covers all nine movements used in the plan, including their
 
 The nutrition section builds on the four everyday tips with flexible examples for breakfast, lunch, and dinner, plus snack and drink ideas. These are food combinations and prep cues rather than prescribed portions or a fixed menu. Sources include USDA MyPlate and CDC guidance on beverages.
 
+## Display preferences
+
+Use the Dark mode button in the header to switch between the original light palette and a dark palette. The site follows the system color preference on the first visit, then remembers a manual choice in browser storage. The theme is applied before the page renders to avoid a bright flash.
+
 ## Deployment
 
 The GitHub Actions workflow in `.github/workflows/pages.yml` publishes `site/` to GitHub Pages after every push to `main`, including pull request merges. In repository Settings → Pages, select **GitHub Actions** as the build and deployment source.
